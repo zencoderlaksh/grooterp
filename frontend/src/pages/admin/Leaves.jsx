@@ -1,9 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchAllLeaves,
-  updateLeaveStatus,
-} from "../../store/adminSlice";
+import { fetchAllLeaves, updateLeaveStatus } from "../../store/adminSlice";
+import { MaterialReactTable } from "material-react-table";
+import { Button } from "@mui/material";
 
 const AdminLeaves = () => {
   const dispatch = useDispatch();
@@ -13,68 +12,85 @@ const AdminLeaves = () => {
     dispatch(fetchAllLeaves());
   }, [dispatch]);
 
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "userId.name",
+        header: "Employee",
+      },
+      {
+        accessorKey: "fromDate",
+        header: "From",
+      },
+      {
+        accessorKey: "toDate",
+        header: "To",
+      },
+      {
+        accessorKey: "reason",
+        header: "Reason",
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        Cell: ({ cell }) => (
+          <span className="capitalize">{cell.getValue()}</span>
+        ),
+      },
+      {
+        header: "Action",
+        Cell: ({ row }) =>
+          row.original.status === "pending" && (
+            <div className="flex gap-2">
+              <Button
+                size="small"
+                color="success"
+                onClick={() =>
+                  dispatch(
+                    updateLeaveStatus({
+                      id: row.original._id,
+                      status: "approved",
+                    })
+                  )
+                }
+              >
+                Approve
+              </Button>
+
+              <Button
+                size="small"
+                color="error"
+                onClick={() =>
+                  dispatch(
+                    updateLeaveStatus({
+                      id: row.original._id,
+                      status: "rejected",
+                    })
+                  )
+                }
+              >
+                Reject
+              </Button>
+            </div>
+          ),
+      },
+    ],
+    [dispatch]
+  );
+
   return (
-    <div className="max-w-6xl mx-auto mt-10 bg-white p-6 shadow rounded">
-      <h2 className="text-2xl font-semibold mb-6">Leave Requests</h2>
+    <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow">
+      <h2 className="text-2xl font-semibold text-[#000080] mb-4">
+        Leave Requests
+      </h2>
 
-      <table className="w-full border text-sm">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border px-3 py-2">Employee</th>
-            <th className="border px-3 py-2">From</th>
-            <th className="border px-3 py-2">To</th>
-            <th className="border px-3 py-2">Reason</th>
-            <th className="border px-3 py-2">Status</th>
-            <th className="border px-3 py-2">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaves.map((l) => (
-            <tr key={l._id}>
-              <td className="border px-3 py-2">
-                {l.userId?.name}
-              </td>
-              <td className="border px-3 py-2">{l.fromDate}</td>
-              <td className="border px-3 py-2">{l.toDate}</td>
-              <td className="border px-3 py-2">{l.reason}</td>
-              <td className="border px-3 py-2 capitalize">{l.status}</td>
-              <td className="border px-3 py-2 space-x-2">
-                {l.status === "pending" && (
-                  <>
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          updateLeaveStatus({
-                            id: l._id,
-                            status: "approved",
-                          })
-                        )
-                      }
-                      className="bg-green-600 text-white px-2 py-1 rounded"
-                    >
-                      Approve
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          updateLeaveStatus({
-                            id: l._id,
-                            status: "rejected",
-                          })
-                        )
-                      }
-                      className="bg-red-600 text-white px-2 py-1 rounded"
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <MaterialReactTable
+        columns={columns}
+        data={leaves}
+        enableGlobalFilter
+        enableSorting
+        enablePagination
+      />
     </div>
   );
 };

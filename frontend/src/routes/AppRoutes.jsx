@@ -14,9 +14,13 @@ import AdminRoute from "./AdminRoute";
 import Users from "../pages/admin/Users";
 import AdminLeaves from "../pages/admin/Leaves";
 import AdminAttendance from "../pages/admin/Attendance";
+import AdminCharts from "../pages/admin/AdminCharts";
+import { ThemeProviderCustom } from "../components/ThemeContext";
+import SalarySlip from "../pages/admin/SalarySlip";
 
 const AppRoutes = () => {
   return (
+    <ThemeProviderCustom>
     <Routes>
       <Route element={<Layout />}>
        <Route
@@ -85,10 +89,27 @@ const AppRoutes = () => {
     </AdminRoute>
   }
 />
+<Route
+  path="/admin/charts"
+  element={
+    <AdminRoute>
+      <AdminCharts />
+    </AdminRoute>
+  }
+/>
+<Route
+  path="/admin/salary/:userId"
+  element={
+    <AdminRoute>
+      <SalarySlip />
+    </AdminRoute>
+  }
+/>
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
     </Routes>
+    </ThemeProviderCustom>
   );
 };
 

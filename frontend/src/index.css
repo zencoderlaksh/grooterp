@@ -1,1 +1,4 @@
 @import "tailwindcss";
+.sidebar-link {
+  @apply px-3 py-2 rounded hover:bg-[#0047AB] transition;
+}

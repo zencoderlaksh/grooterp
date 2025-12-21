@@ -1,17 +1,23 @@
 import { Link } from "react-router-dom";
 import Profile from "../components/Profile";
 import { useSelector } from "react-redux";
-
+import { DarkMode, LightMode } from "@mui/icons-material";
+import { useTheme } from "../components/ThemeContext";
 
 
 
 const Navbar = () => {
+  const { dark, setDark } = useTheme();
   const isAuth = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
+  
 
   return (
     <nav className="w-full bg-gray-800 text-white px-6 py-4 flex justify-between items-center">
   <div className="flex gap-6">
+    <button onClick={() => setDark(!dark)}>
+      {dark ? <LightMode /> : <DarkMode />}
+    </button>
     <Link to="/">Home</Link>
     <Link to="/punch">Punch</Link>
     <Link to="/leave">Leave</Link>

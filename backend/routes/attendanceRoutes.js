@@ -9,6 +9,7 @@ const {
   getAttendanceHistory,
 } = require("../controllers/attendanceController");
 
+// User attendance only
 router.post("/punch-in", protect, punchIn);
 router.post("/punch-out", protect, punchOut);
 router.get("/today", protect, getTodayAttendance);
